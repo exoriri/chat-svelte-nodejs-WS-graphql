@@ -1,0 +1,60 @@
+<script>
+  import ChatLayout from "../lib/components/ChatLayout.svelte";
+  import Message from "../lib/components/Message.svelte";
+
+  const imageUrl = "images/girl-face.png";
+  const name = "Пантера Пантеровна";
+</script>
+
+<ChatLayout {name} {imageUrl}>
+  <div class="chat">
+    <Message avatarImageUrl={imageUrl} text="Прикинь, что вчера было..." />
+    <Message text="Ну, давай, рассказывай. Я готов:))" />
+    <Message
+      avatarImageUrl={imageUrl}
+      text="Рассказываю. Крч, пошла я вчера с подругами гулять...
+        На Думскую... Через час устала и уехала домой спать. 
+        И знаешь что?"
+    />
+    <Message text="Что?" />
+    <Message
+      avatarImageUrl={imageUrl}
+      text="И блин. Не знаю как, но я проснулась в Испании. Без денег. Сможешь 
+        занять на билет обратно?:(("
+    />
+    <Message text="Я бы с радостью, но у нас же переводы заблокированы" />
+    <Message avatarImageUrl={imageUrl} text="Капец..." />
+  </div>
+</ChatLayout>
+
+<style lang="scss">
+  .chat {
+    height: calc(
+      100vh - var(--footer-margin) - var(--footer-height) * 2 -
+        var(--chat-inner-margin) - 25px
+    );
+    background: #fff;
+    border-radius: 20px;
+    margin-top: 25px;
+    padding: 20px;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  }
+</style>
