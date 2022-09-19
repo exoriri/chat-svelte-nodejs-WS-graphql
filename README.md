@@ -1,2 +1,2 @@
 ## Ссылка на ролик
-https://code.visualstudio.com/
+https://www.youtube.com/watch?v=sbYMiqLfoj4
