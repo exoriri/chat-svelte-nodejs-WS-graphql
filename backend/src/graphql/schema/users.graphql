@@ -1,0 +1,11 @@
+type User {
+    id: Int!,
+    avatar_url: String,
+    mobile_number: String!,
+    fullname: String,
+    chat: [Int]
+}
+
+type Mutation {
+    authenticate(mobile_number: String!, password: String!): User
+}
