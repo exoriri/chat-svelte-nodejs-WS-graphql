@@ -1,11 +1,14 @@
 type User {
-    id: Int!,
+    id: ID!,
     avatar_url: String,
     mobile_number: String!,
     fullname: String,
-    chat: [Int]
+    chat: [ID],
+    token: String
 }
 
+union UserResult = User | Error
+
 type Mutation {
-    authenticate(mobile_number: String!, password: String!): User
+    authenticate(mobile_number: String!, password: String!): UserResult
 }

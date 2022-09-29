@@ -1,15 +1,21 @@
 type Message {
-    id: Int!,
-    user_id: Int!,
+    id: ID!,
+    user_id: ID!,
     content: String!
 }
 
 type Chat {
-    id: Int!,
-    user_id: Int!, 
+    id: ID!,
+    user_id: ID!, 
     messages: [Message]
 }
 
+type ChatsResult {
+    chats: [Chat]
+}
+
+union ChatsMessagesResult = ChatsResult | Error
+
 type Query {
-    chatMessages(chat_id: Int!): [Chat]
+    chatMessages(chat_id: ID!): ChatsMessagesResult
 }
