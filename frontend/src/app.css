@@ -52,6 +52,11 @@ table {
   src: url('assets/fonts/Roboto-Regular.ttf');
 }
 
+@font-face {
+  font-family: 'Roboto-Medium';
+  src: url('assets/fonts/Roboto-Medium.ttf');
+}
+
 :root {
   --primary-color: #6B3EED;
   --primary-color-dim: rgba(87,40,222, .75);
@@ -69,15 +74,5 @@ html, body {
 }
 
 #app {
-  width: 65%;
-  margin: 0 auto;
-  padding: 20px 0;
-  position: relative;
   height: 100%;
-}
-
-@media screen and (max-width: 1024px) {
-  #app {
-    width: 95%;
-  }
 }
