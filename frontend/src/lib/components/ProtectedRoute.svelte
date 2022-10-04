@@ -1,12 +1,12 @@
 <script>
     import { Route, useNavigate } from "svelte-navigator";
+    import { user } from '../../stores';
 
     export let path='';
     const navigate = useNavigate();
-    $: authToken = localStorage.getItem('authToken');
 
     $: {
-        if (authToken === null) {
+        if ($user === null) {
             navigate('/login');
         }
     }

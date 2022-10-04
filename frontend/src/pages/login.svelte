@@ -1,12 +1,37 @@
 <script>
     import { useNavigate } from 'svelte-navigator';
+    import { authenticate } from '../generated';
+    import { user } from '../stores';
 
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-        localStorage.setItem('authToken', 'askdfjklasdfjalsjdf');
+    let mobile_number = '';
+    let password = '';
+    let message = '';
+
+    const handleLogin = async () => {
+        const { data } = await authenticate({
+            variables: {
+                mobile_number,
+                password
+            }
+        });
+        
+        const authenticateData = data.authenticate;
+
+        if (authenticateData.__typename === 'Error') {
+            message = authenticateData.message;
+        } else {
+            user.update(() => authenticateData);
+            localStorage.setItem('user', JSON.stringify(authenticateData));
+            navigate('/chat');
+        }
+    }
+
+    if ($user) {
         navigate('/chat');
     }
+    
 </script>
 
 <div class="login-page">
@@ -20,15 +45,15 @@
 
             <div class="login-page__form-group">
                 <label class="login-page__form-label" for="mobile_number">Номер телефона</label>
-                <input placeholder="+78651334455" class="login-page__form-field" name="mobile_number" type="text" />
+                <input bind:value={mobile_number} placeholder="+78651334455" class="login-page__form-field" name="mobile_number" type="text" />
             </div>
 
             <div class="login-page__form-group">
                 <label class="login-page__form-label" for="password">Пароль</label>
-                <input placeholder="+78651334455" class="login-page__form-field" name="password" type="password" />
+                <input bind:value={password} placeholder="+78651334455" class="login-page__form-field" name="password" type="password" />
             </div>
             
-            <button class="login-page__button" on:click={handleLogin}>
+            <button type="button" class="login-page__button" on:click={handleLogin}>
                 Войти
             </button>
         </form>

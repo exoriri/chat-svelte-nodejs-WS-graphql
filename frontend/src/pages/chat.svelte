@@ -7,7 +7,7 @@
 </script>
 
 <div class="chat-wrapper">
-  <ChatLayout {name} {imageUrl}>
+  <ChatLayout isUserHeader {name} {imageUrl}>
     <div class="chat">
       <Message avatarImageUrl={imageUrl} text="Прикинь, что вчера было..." />
       <Message text="Ну, давай, рассказывай. Я готов:))" />
@@ -67,11 +67,11 @@
     &::-webkit-scrollbar-thumb:hover {
       background: #555;
     }
+  }
 
-    @media screen and (max-width: 1024px) {
+  @media screen and (max-width: 1024px) {
       .chat-wrapper {
         width: 95%;
       }
     }
-  }
 </style>
