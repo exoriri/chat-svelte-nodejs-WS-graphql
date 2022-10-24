@@ -6,28 +6,39 @@
   const name = "Пантера Пантеровна";
 </script>
 
-<ChatLayout {name} {imageUrl}>
-  <div class="chat">
-    <Message avatarImageUrl={imageUrl} text="Прикинь, что вчера было..." />
-    <Message text="Ну, давай, рассказывай. Я готов:))" />
-    <Message
-      avatarImageUrl={imageUrl}
-      text="Рассказываю. Крч, пошла я вчера с подругами гулять...
-        На Думскую... Через час устала и уехала домой спать. 
-        И знаешь что?"
-    />
-    <Message text="Что?" />
-    <Message
-      avatarImageUrl={imageUrl}
-      text="И блин. Не знаю как, но я проснулась в Испании. Без денег. Сможешь 
-        занять на билет обратно?:(("
-    />
-    <Message text="Я бы с радостью, но у нас же переводы заблокированы" />
-    <Message avatarImageUrl={imageUrl} text="Капец..." />
-  </div>
-</ChatLayout>
+<div class="chat-wrapper">
+  <ChatLayout isUserHeader {name} {imageUrl}>
+    <div class="chat">
+      <Message avatarImageUrl={imageUrl} text="Прикинь, что вчера было..." />
+      <Message text="Ну, давай, рассказывай. Я готов:))" />
+      <Message
+        avatarImageUrl={imageUrl}
+        text="Рассказываю. Крч, пошла я вчера с подругами гулять...
+          На Думскую... Через час устала и уехала домой спать. 
+          И знаешь что?"
+      />
+      <Message text="Что?" />
+      <Message
+        avatarImageUrl={imageUrl}
+        text="И блин. Не знаю как, но я проснулась в Испании. Без денег. Сможешь 
+          занять на билет обратно?:(("
+      />
+      <Message text="Я бы с радостью, но у нас же переводы заблокированы" />
+      <Message avatarImageUrl={imageUrl} text="Капец..." />
+    </div>
+  </ChatLayout>
+</div>
+
 
 <style lang="scss">
+  .chat-wrapper {
+    width: 65%;
+    margin: 0 auto;
+    padding: 20px 0;
+    position: relative;
+    height: 100%;
+  }
+
   .chat {
     height: calc(
       100vh - var(--footer-margin) - var(--footer-height) * 2 -
@@ -57,4 +68,10 @@
       background: #555;
     }
   }
+
+  @media screen and (max-width: 1024px) {
+      .chat-wrapper {
+        width: 95%;
+      }
+    }
 </style>

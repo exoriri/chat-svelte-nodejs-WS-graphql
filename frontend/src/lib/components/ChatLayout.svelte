@@ -2,10 +2,18 @@
     import Avatar from "./Avatar.svelte";
     import Button from "./Button.svelte";
     import sendIcon from '../../assets/send-icon.svg';
+    import UserHeader from "./UserHeader.svelte";
+    import { user } from 'src/stores';
 
     export let imageUrl;
-
     export let name = '';
+    export let isUserHeader = false;
+
+    const logout = () => {
+        user.update(() => null);
+        localStorage.removeItem('user');
+    }
+
 </script>
 
 <style lang="scss">
@@ -69,6 +77,13 @@
 </style>
 
 <div>
+    {#if isUserHeader} 
+        <UserHeader 
+            avatarImageUrl={$user?.avatar_url} 
+            userName={$user?.fullname}
+            on:logout={logout}
+        />
+    {/if}
     <header class="header">
         <Avatar
             imageUrl={imageUrl}
