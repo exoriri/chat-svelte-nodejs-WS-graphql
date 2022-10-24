@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany, JoinTable, JoinColumn } from 'typeorm';
+import { Chat } from './chat.entity';
+import { Message } from './message.entity';
 
 @Entity()
 export class User {
@@ -17,6 +19,22 @@ export class User {
   @Column()
   password: string
 
-  @Column('int', { array: true }) 
-  chat: number[]
+  @OneToMany(() => Message, (message: Message) => message.user, {
+    cascade: true
+  })
+  messages: Message[]
+
+  @ManyToMany(() => Chat)
+  @JoinTable({
+    name: 'users_chats',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id'
+    },
+    inverseJoinColumn: {
+      name: 'chat_id',
+      referencedColumnName: 'id'
+    }
+  })
+  chats: Chat[]
 };

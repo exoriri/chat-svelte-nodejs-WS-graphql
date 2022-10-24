@@ -1,7 +1,9 @@
 type Message {
     id: ID!,
     user_id: ID!,
-    content: String!
+    chat_id: ID!,
+    content: String!,
+    created_at: String
 }
 
 type Chat {
@@ -11,11 +13,22 @@ type Chat {
 }
 
 type ChatsResult {
-    chats: [Chat]
+    result: [Chat]
 }
 
-union ChatsMessagesResult = ChatsResult | Error
+union ChatsMessagesResult = Chat | Error
+union AllChatsResult = ChatsResult | Error
+union SentMessageResult = Message | Error
 
 type Query {
-    chatMessages(chat_id: ID!): ChatsMessagesResult
+    chat(chat_id: ID!): ChatsMessagesResult
+    chats: AllChatsResult
+}
+
+type Mutation {
+    sendMessage(chat_id: ID!, content: String): SentMessageResult
+}
+
+type Subscription {
+    newMessage: SentMessageResult
 }

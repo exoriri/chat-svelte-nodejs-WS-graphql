@@ -11,7 +11,9 @@
 export interface Message {
     id: string;
     user_id: string;
+    chat_id: string;
     content: string;
+    created_at?: Nullable<string>;
 }
 
 export interface Chat {
@@ -21,11 +23,21 @@ export interface Chat {
 }
 
 export interface ChatsResult {
-    chats?: Nullable<Nullable<Chat>[]>;
+    result?: Nullable<Nullable<Chat>[]>;
 }
 
 export interface IQuery {
-    chatMessages(chat_id: string): Nullable<ChatsMessagesResult> | Promise<Nullable<ChatsMessagesResult>>;
+    chat(chat_id: string): Nullable<ChatsMessagesResult> | Promise<Nullable<ChatsMessagesResult>>;
+    chats(): Nullable<AllChatsResult> | Promise<Nullable<AllChatsResult>>;
+}
+
+export interface IMutation {
+    sendMessage(chat_id: string, content?: Nullable<string>): Nullable<SentMessageResult> | Promise<Nullable<SentMessageResult>>;
+    authenticate(mobile_number: string, password: string): Nullable<UserResult> | Promise<Nullable<UserResult>>;
+}
+
+export interface ISubscription {
+    newMessage(): Nullable<SentMessageResult> | Promise<Nullable<SentMessageResult>>;
 }
 
 export interface Error {
@@ -41,10 +53,8 @@ export interface User {
     token?: Nullable<string>;
 }
 
-export interface IMutation {
-    authenticate(mobile_number: string, password: string): Nullable<UserResult> | Promise<Nullable<UserResult>>;
-}
-
-export type ChatsMessagesResult = ChatsResult | Error;
+export type ChatsMessagesResult = Chat | Error;
+export type AllChatsResult = ChatsResult | Error;
+export type SentMessageResult = Message | Error;
 export type UserResult = User | Error;
 type Nullable<T> = T | null;
