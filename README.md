@@ -1,2 +1,2 @@
-## Пошаговая разработка чата с нуля.
-https://www.youtube.com/playlist?list=PL48ap7s1biDFB4UvhRzep76Yux-MO-kn1
+## Cсылка на ролик.
+https://youtu.be/4ihhqx8-g-c
