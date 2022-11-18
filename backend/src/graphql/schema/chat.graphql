@@ -1,6 +1,6 @@
 type Message {
     id: ID!,
-    user_id: ID!,
+    user: User,
     chat_id: ID!,
     content: String!,
     created_at: String

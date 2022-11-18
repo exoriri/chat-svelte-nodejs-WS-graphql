@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+    import { sendMessage } from "src/generated";
     import Avatar from "./Avatar.svelte";
     import Button from "./Button.svelte";
     import sendIcon from '../../assets/send-icon.svg';
@@ -8,6 +9,18 @@
     export let imageUrl;
     export let name = '';
     export let isUserHeader = false;
+
+    let message = '';
+
+    const onSend = async () => {
+        await sendMessage({ 
+            variables: {
+                chat_id: '4',
+                content: message
+            }
+         });
+        message = '';
+    };
 
     const logout = () => {
         user.update(() => null);
@@ -84,18 +97,10 @@
             on:logout={logout}
         />
     {/if}
-    <header class="header">
-        <Avatar
-            imageUrl={imageUrl}
-        />
-        <h3 class="header__title">
-            {name}
-        </h3>
-    </header>
     <slot />
     <footer class="footer">
-        <input placeholder="type smth here..." class="footer__input" type="text" />
-        <Button on:click={() => { alert('Отправляем...') }} class="footer__btn">
+        <input bind:value={message} placeholder="type smth here..." class="footer__input" type="text" />
+        <Button on:click={onSend} class="footer__btn">
             <span class="footer__btn-text">
                 Отправить
             </span>

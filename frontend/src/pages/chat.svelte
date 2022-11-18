@@ -1,15 +1,41 @@
 <script>
+  import { newMessage } from "src/generated";
+  import { user } from "src/stores";
+  import { each } from "svelte/internal";
   import ChatLayout from "../lib/components/ChatLayout.svelte";
   import Message from "../lib/components/Message.svelte";
 
   const imageUrl = "images/girl-face.png";
   const name = "Пантера Пантеровна";
+
+  $: subscribedMessages = [];
+
+  const messageSubscribe = async () => {
+    const reply = newMessage({});
+
+    reply.subscribe(({ data }) => {
+      if (data.newMessage.__typename !== "Error") {
+        const dublSubscribedMessages = [...subscribedMessages];
+        dublSubscribedMessages.push(data.newMessage);
+        subscribedMessages = dublSubscribedMessages;
+      }
+    });
+  };
+
+  messageSubscribe();
 </script>
 
 <div class="chat-wrapper">
   <ChatLayout isUserHeader {name} {imageUrl}>
     <div class="chat">
-      <Message avatarImageUrl={imageUrl} text="Прикинь, что вчера было..." />
+      {#each subscribedMessages as message}
+        {#if $user.id === message.user.id}
+          <Message text={message.content} />
+        {:else}
+          <Message avatarImageUrl={message.user.avatar_url} text={message.content} />
+        {/if}
+      {/each}
+      <!-- <Message avatarImageUrl={imageUrl} text="Прикинь, что вчера было..." />
       <Message text="Ну, давай, рассказывай. Я готов:))" />
       <Message
         avatarImageUrl={imageUrl}
@@ -24,11 +50,10 @@
           занять на билет обратно?:(("
       />
       <Message text="Я бы с радостью, но у нас же переводы заблокированы" />
-      <Message avatarImageUrl={imageUrl} text="Капец..." />
+      <Message avatarImageUrl={imageUrl} text="Капец..." /> -->
     </div>
   </ChatLayout>
 </div>
-
 
 <style lang="scss">
   .chat-wrapper {
@@ -70,8 +95,8 @@
   }
 
   @media screen and (max-width: 1024px) {
-      .chat-wrapper {
-        width: 95%;
-      }
+    .chat-wrapper {
+      width: 95%;
     }
+  }
 </style>

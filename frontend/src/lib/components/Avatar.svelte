@@ -16,11 +16,18 @@
     }
 </style>
 
-<div class="avatar" style="width: {avatarWidth}; min-width: {avatarWidth}; height: {avatarHeight}; min-height: {avatarHeight} ">
+<div class="avatar" style="
+    width: {avatarWidth}; 
+    min-width: {avatarWidth}; 
+    height: {avatarHeight}; 
+    min-height: {avatarHeight};
+    max-height: {avatarHeight};
+">
     <img 
         src={imageUrl} 
         alt="avatar profile" 
         class="avatar__image"
         width="100%"
+        height="100%"
     />
 </div>

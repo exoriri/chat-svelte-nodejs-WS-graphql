@@ -1,6 +1,6 @@
 import client from "src/client.ts";
 import type {
-        MutationOptions
+        MutationOptions, SubscriptionOptions
       } from "@apollo/client";
 import { readable } from "svelte/store";
 import type { Readable } from "svelte/store";
@@ -19,6 +19,8 @@ export type Scalars = {
   Float: number;
 };
 
+export type AllChatsResult = ChatsResult | Error;
+
 export type Chat = {
   __typename?: 'Chat';
   id: Scalars['ID'];
@@ -26,11 +28,11 @@ export type Chat = {
   user_id: Scalars['ID'];
 };
 
-export type ChatsMessagesResult = ChatsResult | Error;
+export type ChatsMessagesResult = Chat | Error;
 
 export type ChatsResult = {
   __typename?: 'ChatsResult';
-  chats?: Maybe<Array<Maybe<Chat>>>;
+  result?: Maybe<Array<Maybe<Chat>>>;
 };
 
 export type Error = {
@@ -40,14 +42,17 @@ export type Error = {
 
 export type Message = {
   __typename?: 'Message';
+  chat_id: Scalars['ID'];
   content: Scalars['String'];
+  created_at?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  user_id: Scalars['ID'];
+  user?: Maybe<User>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   authenticate?: Maybe<UserResult>;
+  sendMessage?: Maybe<SentMessageResult>;
 };
 
 
@@ -56,14 +61,28 @@ export type MutationAuthenticateArgs = {
   password: Scalars['String'];
 };
 
+
+export type MutationSendMessageArgs = {
+  chat_id: Scalars['ID'];
+  content?: InputMaybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
-  chatMessages?: Maybe<ChatsMessagesResult>;
+  chat?: Maybe<ChatsMessagesResult>;
+  chats?: Maybe<AllChatsResult>;
 };
 
 
-export type QueryChatMessagesArgs = {
+export type QueryChatArgs = {
   chat_id: Scalars['ID'];
+};
+
+export type SentMessageResult = Error | Message;
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  newMessage?: Maybe<SentMessageResult>;
 };
 
 export type User = {
@@ -86,6 +105,19 @@ export type AuthenticateMutationVariables = Exact<{
 
 export type AuthenticateMutation = { __typename?: 'Mutation', authenticate?: { __typename?: 'Error', message: string } | { __typename?: 'User', id: string, avatar_url?: string | null, fullname?: string | null, chat?: Array<string | null> | null, token?: string | null } | null };
 
+export type SendMessageMutationVariables = Exact<{
+  chat_id: Scalars['ID'];
+  content: Scalars['String'];
+}>;
+
+
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage?: { __typename?: 'Error', message: string } | { __typename?: 'Message', id: string } | null };
+
+export type NewMessageSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NewMessageSubscription = { __typename?: 'Subscription', newMessage?: { __typename?: 'Error' } | { __typename?: 'Message', id: string, chat_id: string, content: string, user?: { __typename?: 'User', id: string, avatar_url?: string | null } | null } | null };
+
 
 export const AuthenticateDoc = gql`
     mutation authenticate($mobile_number: String!, $password: String!) {
@@ -103,6 +135,33 @@ export const AuthenticateDoc = gql`
   }
 }
     `;
+export const SendMessageDoc = gql`
+    mutation sendMessage($chat_id: ID!, $content: String!) {
+  sendMessage(chat_id: $chat_id, content: $content) {
+    ... on Message {
+      id
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    `;
+export const NewMessageDoc = gql`
+    subscription newMessage {
+  newMessage {
+    ... on Message {
+      id
+      chat_id
+      content
+      user {
+        id
+        avatar_url
+      }
+    }
+  }
+}
+    `;
 export const authenticate = (
             options: Omit<
               MutationOptions<any, AuthenticateMutationVariables>, 
@@ -114,4 +173,27 @@ export const authenticate = (
               ...options,
             });
             return m;
+          }
+export const sendMessage = (
+            options: Omit<
+              MutationOptions<any, SendMessageMutationVariables>, 
+              "mutation"
+            >
+          ) => {
+            const m = client.mutate<SendMessageMutation, SendMessageMutationVariables>({
+              mutation: SendMessageDoc,
+              ...options,
+            });
+            return m;
+          }
+export const newMessage = (
+            options: Omit<SubscriptionOptions<NewMessageSubscriptionVariables>, "query">
+          ) => {
+            const q = client.subscribe<NewMessageSubscription, NewMessageSubscriptionVariables>(
+              {
+                query: NewMessageDoc,
+                ...options,
+              }
+            )
+            return q;
           }
