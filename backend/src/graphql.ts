@@ -10,7 +10,7 @@
 
 export interface Message {
     id: string;
-    user_id: string;
+    user?: Nullable<User>;
     chat_id: string;
     content: string;
     created_at?: Nullable<string>;

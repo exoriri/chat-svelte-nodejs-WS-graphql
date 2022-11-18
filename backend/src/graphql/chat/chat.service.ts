@@ -76,7 +76,7 @@ export class ChatService {
         const message = {
             chat_id,
             content,
-            user_id: user.id
+            user: user
         };
 
         const savedMessage = await this.messageRepository.save(message);
