@@ -8,15 +8,21 @@
     const messageClasses = avatarImageUrl ? "message" : "message message--personal";
 </script>
 
+<div class={messageClasses}>
+    {#if avatarImageUrl}
+        <Avatar imageUrl={avatarImageUrl} />
+    {/if}
+
+    <p class="message__text">
+        {text}
+    </p>
+</div>
+
 <style lang="scss">
     .message {
         display: flex;
         align-items: center;
         margin-top: 25px;
-
-        &:first-child {
-            margin-top: 0;
-        }
         
         &--personal {
             justify-content: flex-end;
@@ -32,8 +38,8 @@
         &__text {
             font-family: 'Roboto-Regular';
             color: #000;
-            font-size: 1.375rem;
-            padding: 20px;
+            font-size: 1.125rem;
+            padding: 15px;
             border-radius: 25px;
             margin-left: 20px;
             border-bottom-left-radius: 0;
@@ -41,13 +47,3 @@
         }
     }
 </style>
-
-<div class={messageClasses}>
-    {#if avatarImageUrl}
-        <Avatar imageUrl={avatarImageUrl} />
-    {/if}
-
-    <p class="message__text">
-        {text}
-    </p>
-</div>

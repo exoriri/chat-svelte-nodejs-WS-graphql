@@ -8,3 +8,4 @@ generates:
       - graphql-codegen-svelte-apollo
 config: 
   clientPath: 'src/client.ts'
+  asyncQuery: true

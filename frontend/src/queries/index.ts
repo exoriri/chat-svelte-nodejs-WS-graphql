@@ -23,6 +23,7 @@ export const SEND_MESSAGE = gql`
     sendMessage(chat_id: $chat_id, content: $content) {
       ... on Message {
         id
+        content
       }
 
       ... on Error {
@@ -33,8 +34,8 @@ export const SEND_MESSAGE = gql`
 `;
 
 export const NEW_MESSAGE_SUBSCRIPTION = gql`
-  subscription newMessage {
-    newMessage {
+  subscription newMessage($chat_id: ID!) {
+    newMessage(chat_id: $chat_id) {
       ... on Message {
         id
         chat_id
@@ -43,6 +44,62 @@ export const NEW_MESSAGE_SUBSCRIPTION = gql`
           id
           avatar_url
         }
+      }
+    }
+  }
+`;
+
+export const FETCH_ALL_CHATS = gql`
+  query chats {
+    chats {
+      ... on ChatsResult {
+        result {
+          id
+          user {
+            id
+            fullname
+            avatar_url
+          }
+          messages {
+            id
+            user {
+              id
+              avatar_url
+            }
+            chat_id
+            content
+            created_at
+          }
+        }
+      }
+
+      ... on Error {
+        message
+      }
+    }
+  }
+`;
+
+export const FETCH_CHAT_BY_ID = gql`
+  query chat($chat_id: ID!) {
+    chat(chat_id: $chat_id) {
+      ... on Chat {
+        id
+        user {
+          id
+          avatar_url
+        }
+        messages {
+          id
+          user {
+            id
+            avatar_url
+          }
+          content
+        }
+      }
+      ... on Error {
+        message
       }
     }
   }

@@ -14,6 +14,8 @@
         background: none;
         border: none;
         cursor: pointer;
+        display: block;
+        text-align: left;
     }
 </style>
 

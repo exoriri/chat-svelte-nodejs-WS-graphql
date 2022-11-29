@@ -1,6 +1,6 @@
 import client from "src/client.ts";
 import type {
-        MutationOptions, SubscriptionOptions
+        ApolloQueryResult, ObservableQuery, WatchQueryOptions, QueryOptions, MutationOptions, SubscriptionOptions
       } from "@apollo/client";
 import { readable } from "svelte/store";
 import type { Readable } from "svelte/store";
@@ -25,7 +25,7 @@ export type Chat = {
   __typename?: 'Chat';
   id: Scalars['ID'];
   messages?: Maybe<Array<Maybe<Message>>>;
-  user_id: Scalars['ID'];
+  user: User;
 };
 
 export type ChatsMessagesResult = Chat | Error;
@@ -85,6 +85,11 @@ export type Subscription = {
   newMessage?: Maybe<SentMessageResult>;
 };
 
+
+export type SubscriptionNewMessageArgs = {
+  chat_id: Scalars['ID'];
+};
+
 export type User = {
   __typename?: 'User';
   avatar_url?: Maybe<Scalars['String']>;
@@ -111,12 +116,26 @@ export type SendMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendMessageMutation = { __typename?: 'Mutation', sendMessage?: { __typename?: 'Error', message: string } | { __typename?: 'Message', id: string } | null };
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage?: { __typename?: 'Error', message: string } | { __typename?: 'Message', id: string, content: string } | null };
 
-export type NewMessageSubscriptionVariables = Exact<{ [key: string]: never; }>;
+export type NewMessageSubscriptionVariables = Exact<{
+  chat_id: Scalars['ID'];
+}>;
 
 
 export type NewMessageSubscription = { __typename?: 'Subscription', newMessage?: { __typename?: 'Error' } | { __typename?: 'Message', id: string, chat_id: string, content: string, user?: { __typename?: 'User', id: string, avatar_url?: string | null } | null } | null };
+
+export type ChatsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ChatsQuery = { __typename?: 'Query', chats?: { __typename?: 'ChatsResult', result?: Array<{ __typename?: 'Chat', id: string, user: { __typename?: 'User', id: string, fullname?: string | null, avatar_url?: string | null }, messages?: Array<{ __typename?: 'Message', id: string, chat_id: string, content: string, created_at?: string | null, user?: { __typename?: 'User', id: string, avatar_url?: string | null } | null } | null> | null } | null> | null } | { __typename?: 'Error', message: string } | null };
+
+export type ChatQueryVariables = Exact<{
+  chat_id: Scalars['ID'];
+}>;
+
+
+export type ChatQuery = { __typename?: 'Query', chat?: { __typename?: 'Chat', id: string, user: { __typename?: 'User', id: string, avatar_url?: string | null }, messages?: Array<{ __typename?: 'Message', id: string, content: string, user?: { __typename?: 'User', id: string, avatar_url?: string | null } | null } | null> | null } | { __typename?: 'Error', message: string } | null };
 
 
 export const AuthenticateDoc = gql`
@@ -140,6 +159,7 @@ export const SendMessageDoc = gql`
   sendMessage(chat_id: $chat_id, content: $content) {
     ... on Message {
       id
+      content
     }
     ... on Error {
       message
@@ -148,8 +168,8 @@ export const SendMessageDoc = gql`
 }
     `;
 export const NewMessageDoc = gql`
-    subscription newMessage {
-  newMessage {
+    subscription newMessage($chat_id: ID!) {
+  newMessage(chat_id: $chat_id) {
     ... on Message {
       id
       chat_id
@@ -158,6 +178,59 @@ export const NewMessageDoc = gql`
         id
         avatar_url
       }
+    }
+  }
+}
+    `;
+export const ChatsDoc = gql`
+    query chats {
+  chats {
+    ... on ChatsResult {
+      result {
+        id
+        user {
+          id
+          fullname
+          avatar_url
+        }
+        messages {
+          id
+          user {
+            id
+            avatar_url
+          }
+          chat_id
+          content
+          created_at
+        }
+      }
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    `;
+export const ChatDoc = gql`
+    query chat($chat_id: ID!) {
+  chat(chat_id: $chat_id) {
+    ... on Chat {
+      id
+      user {
+        id
+        avatar_url
+      }
+      messages {
+        id
+        user {
+          id
+          avatar_url
+        }
+        content
+      }
+    }
+    ... on Error {
+      message
     }
   }
 }
@@ -197,3 +270,91 @@ export const newMessage = (
             )
             return q;
           }
+export const chats = (
+            options: Omit<
+              WatchQueryOptions<ChatsQueryVariables>, 
+              "query"
+            >
+          ): Readable<
+            ApolloQueryResult<ChatsQuery> & {
+              query: ObservableQuery<
+                ChatsQuery,
+                ChatsQueryVariables
+              >;
+            }
+          > => {
+            const q = client.watchQuery({
+              query: ChatsDoc,
+              ...options,
+            });
+            var result = readable<
+              ApolloQueryResult<ChatsQuery> & {
+                query: ObservableQuery<
+                  ChatsQuery,
+                  ChatsQueryVariables
+                >;
+              }
+            >(
+              { data: {} as any, loading: true, error: undefined, networkStatus: 1, query: q },
+              (set) => {
+                q.subscribe((v: any) => {
+                  set({ ...v, query: q });
+                });
+              }
+            );
+            return result;
+          }
+        
+              export const Asyncchats = (
+                options: Omit<
+                  QueryOptions<ChatsQueryVariables>,
+                  "query"
+                >
+              ) => {
+                return client.query<ChatsQuery>({query: ChatsDoc, ...options})
+              }
+            
+export const chat = (
+            options: Omit<
+              WatchQueryOptions<ChatQueryVariables>, 
+              "query"
+            >
+          ): Readable<
+            ApolloQueryResult<ChatQuery> & {
+              query: ObservableQuery<
+                ChatQuery,
+                ChatQueryVariables
+              >;
+            }
+          > => {
+            const q = client.watchQuery({
+              query: ChatDoc,
+              ...options,
+            });
+            var result = readable<
+              ApolloQueryResult<ChatQuery> & {
+                query: ObservableQuery<
+                  ChatQuery,
+                  ChatQueryVariables
+                >;
+              }
+            >(
+              { data: {} as any, loading: true, error: undefined, networkStatus: 1, query: q },
+              (set) => {
+                q.subscribe((v: any) => {
+                  set({ ...v, query: q });
+                });
+              }
+            );
+            return result;
+          }
+        
+              export const Asyncchat = (
+                options: Omit<
+                  QueryOptions<ChatQueryVariables>,
+                  "query"
+                >
+              ) => {
+                return client.query<ChatQuery>({query: ChatDoc, ...options})
+              }
+            

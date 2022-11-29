@@ -24,7 +24,7 @@ export class User {
   })
   messages: Message[]
 
-  @ManyToMany(() => Chat)
+  @ManyToMany(() => Chat, chat => chat.users)
   @JoinTable({
     name: 'users_chats',
     joinColumn: {

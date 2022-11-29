@@ -1,40 +1,51 @@
 <script>
+  import { afterUpdate } from "svelte";
   import { newMessage } from "src/generated";
-  import { user } from "src/stores";
-  import { each } from "svelte/internal";
+  import { user, chat } from "src/stores";
   import ChatLayout from "../lib/components/ChatLayout.svelte";
-  import Message from "../lib/components/Message.svelte";
+  import MessagesList from "src/lib/components/MessagesList.svelte";
 
-  const imageUrl = "images/girl-face.png";
-  const name = "Пантера Пантеровна";
-
+  let previousChatId = $chat.selectedChat?.id;
   $: subscribedMessages = [];
+  $: previousChatId !== $chat.selectedChat?.id && messageSubscribe() && clearSubscribedMessages();
+
+  const clearSubscribedMessages = () => {
+    subscribedMessages = [];
+  }
 
   const messageSubscribe = async () => {
-    const reply = newMessage({});
-
+    const reply = newMessage({ variables: {chat_id: $chat.selectedChat.id} });
+    previousChatId = $chat.selectedChat.id
     reply.subscribe(({ data }) => {
       if (data.newMessage.__typename !== "Error") {
         const dublSubscribedMessages = [...subscribedMessages];
-        dublSubscribedMessages.push(data.newMessage);
+        const foundMessageIndex = dublSubscribedMessages.findIndex(message => message.id === data.newMessage.id);
+
+        if (foundMessageIndex === -1) {
+          dublSubscribedMessages.push(data.newMessage);
+          chat.update((prevState) => ({ ...prevState, lastSentMessage: data.newMessage.content }))
+        }
+
         subscribedMessages = dublSubscribedMessages;
       }
     });
   };
 
-  messageSubscribe();
 </script>
 
 <div class="chat-wrapper">
-  <ChatLayout isUserHeader {name} {imageUrl}>
+  <ChatLayout isUserHeader>
     <div class="chat">
-      {#each subscribedMessages as message}
-        {#if $user.id === message.user.id}
-          <Message text={message.content} />
-        {:else}
-          <Message avatarImageUrl={message.user.avatar_url} text={message.content} />
-        {/if}
-      {/each}
+      {#if $chat.selectedChat !== null} 
+      <MessagesList
+        user={$user} 
+        messages={$chat.selectedChat.messages}
+      />
+      {/if}
+      <MessagesList
+        user={$user} 
+        messages={subscribedMessages}
+      />
       <!-- <Message avatarImageUrl={imageUrl} text="Прикинь, что вчера было..." />
       <Message text="Ну, давай, рассказывай. Я готов:))" />
       <Message
@@ -57,9 +68,7 @@
 
 <style lang="scss">
   .chat-wrapper {
-    width: 65%;
-    margin: 0 auto;
-    padding: 20px 0;
+    padding: 20px;
     position: relative;
     height: 100%;
   }
@@ -67,13 +76,13 @@
   .chat {
     height: calc(
       100vh - var(--footer-margin) - var(--footer-height) * 2 -
-        var(--chat-inner-margin) - 25px
+        var(--chat-inner-margin)
     );
     background: #fff;
-    border-radius: 20px;
-    margin-top: 25px;
+    border-radius: 15px;
     padding: 20px;
     overflow-y: scroll;
+    box-shadow: 0px 0px 5px rgba($color: #000000, $alpha: .25);
 
     &::-webkit-scrollbar {
       width: 7px;

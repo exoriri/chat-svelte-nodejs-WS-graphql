@@ -60,7 +60,7 @@ table {
 :root {
   --primary-color: #6B3EED;
   --primary-color-dim: rgba(87,40,222, .75);
-  --secondary-color: #D7E3EE;
+  --secondary-color: #EDEDED;
   --footer-margin: 60px;
   --footer-height: 91.2px;
   --chat-inner-margin: 25px;
