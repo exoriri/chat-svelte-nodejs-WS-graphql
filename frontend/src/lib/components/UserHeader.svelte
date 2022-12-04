@@ -49,7 +49,7 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
 
         &__username {
             font-size: 1.625rem;
