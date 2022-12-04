@@ -116,7 +116,7 @@ export type SendMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendMessageMutation = { __typename?: 'Mutation', sendMessage?: { __typename?: 'Error', message: string } | { __typename?: 'Message', id: string, content: string } | null };
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage?: { __typename?: 'Error', message: string } | { __typename?: 'Message', id: string } | null };
 
 export type NewMessageSubscriptionVariables = Exact<{
   chat_id: Scalars['ID'];
@@ -159,7 +159,6 @@ export const SendMessageDoc = gql`
   sendMessage(chat_id: $chat_id, content: $content) {
     ... on Message {
       id
-      content
     }
     ... on Error {
       message

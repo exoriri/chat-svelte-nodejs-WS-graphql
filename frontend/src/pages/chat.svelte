@@ -1,5 +1,4 @@
 <script>
-  import { afterUpdate } from "svelte";
   import { newMessage } from "src/generated";
   import { user, chat } from "src/stores";
   import ChatLayout from "../lib/components/ChatLayout.svelte";
@@ -23,7 +22,6 @@
 
         if (foundMessageIndex === -1) {
           dublSubscribedMessages.push(data.newMessage);
-          chat.update((prevState) => ({ ...prevState, lastSentMessage: data.newMessage.content }))
         }
 
         subscribedMessages = dublSubscribedMessages;

@@ -23,7 +23,6 @@ export const SEND_MESSAGE = gql`
     sendMessage(chat_id: $chat_id, content: $content) {
       ... on Message {
         id
-        content
       }
 
       ... on Error {

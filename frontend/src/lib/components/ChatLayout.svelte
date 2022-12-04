@@ -15,7 +15,6 @@
   $: loading = true;
   $: errorMessage = "";
   $: selectedChat = $chat.selectedChat;
-  $: lastSentMessage = $chat.lastSentMessage;
 
   onMount(async () => {
     const { data } = await Asyncchats({});
@@ -39,9 +38,8 @@
 
     if (data.chat.__typename === "Chat") {
       chat.update(() => ({
-        lastSentMessage: data.chat.messages[data.chat.messages.length - 1].content,
         selectedChat: data.chat,
-        loadingSelectedChat: false
+        loadingSelectedChat: false,
       }));
     } else {
       console.log(data.chat.message, "ERROR");
@@ -53,13 +51,13 @@
   };
 
   const onSend = async () => {
-    const {data} = await sendMessage({
+    await sendMessage({
       variables: {
         chat_id: $chat.selectedChat.id,
         content: message,
       },
     });
-    message = '';
+    message = "";
   };
 
   const logout = () => {
@@ -95,10 +93,8 @@
                     active={selectedChat.id === chat.id}
                     avatarUrl={chat.user.avatar_url}
                     titleName={chat.user.fullname}
-                    messageText={chat.id === selectedChat.id &&
-                    lastSentMessage !== ""
-                      ? lastSentMessage
-                      : chat.messages[chat.messages.length - 1].content}
+                    messageText={chat.messages[chat.messages.length - 1]
+                      .content}
                   />
                 </div>
               </Button>
